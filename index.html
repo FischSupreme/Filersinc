@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Filers.inc — Custom Files, Fast</title>
+  <meta name="description" content="Filers.inc — I make the files you ask for. Pay with Apple Pay, Steam gift cards, and more." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>📁</text></svg>">
+  <style>
+    :root{
+      --bg: #0b0f17; 
+      --card: #121826; 
+      --accent: #7c5cff; 
+      --accent-2: #22d3ee; 
+      --text: #e6e8ee; 
+      --muted: #9aa3b2; 
+      --success:#22c55e; 
+      --warning:#f59e0b; 
+      --danger:#ef4444; 
+      --shadow: 0 10px 30px rgba(0,0,0,.35), 0 4px 12px rgba(0,0,0,.25); 
+      --radius-xl: 20px; 
+      --radius-2xl: 28px; 
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      color:var(--text); background: radial-gradient(1200px 800px at 10% -10%, rgba(124,92,255,.20), transparent 60%), radial-gradient(1000px 700px at 90% 0%, rgba(34,211,238,.15), transparent 60%), var(--bg); 
+    }
+    a{color:inherit}
+    .container{max-width:1100px; margin-inline:auto; padding:24px}
+    .glass{background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,.08); box-shadow:var(--shadow)}
+    .btn{display:inline-flex; align-items:center; gap:.6rem; padding:.9rem 1.1rem; border-radius:14px; border:1px solid rgba(255,255,255,.12); background:#1b2335; color:var(--text); text-decoration:none; font-weight:600; cursor:pointer}
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:linear-gradient(135deg, var(--accent), var(--accent-2)); color:#0b0f17}
+    .btn-ghost{background:transparent}
+    .chip{display:inline-flex; align-items:center; gap:.5rem; padding:.35rem .7rem; border-radius:999px; border:1px solid rgba(255,255,255,.12); color:var(--muted); font-size:.85rem}
+    .hero{display:grid; grid-template-columns:1.1fr .9fr; gap:28px; align-items:center}
+    .card{border-radius:var(--radius-2xl); padding:22px}
+    .pill{display:inline-block; font-weight:700; font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:#0b0f17; background:linear-gradient(135deg, var(--accent), var(--accent-2)); padding:.5rem .8rem; border-radius:999px}
+    h1{font-size:clamp(2.2rem, 6vw, 3.4rem); line-height:1.05; margin:14px 0 12px}
+    h2{font-size:clamp(1.4rem, 3vw, 1.8rem); margin:0 0 10px}
+    p.lead{color:var(--muted); font-size:1.08rem;}
+    .kpis{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:18px}
+    .kpi{border-radius:18px; padding:14px; background:#0f1524; border:1px solid rgba(255,255,255,.08)}
+    .kpi b{font-size:1.3rem}
+    .section{margin-top:38px}
+    .grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+    .grid-2{display:grid; grid-template-columns:repeat(2,1fr); gap:16px}
+    .list{padding:0; margin:0; list-style:none; display:grid; gap:10px}
+    .list li{display:flex; gap:.6rem; align-items:flex-start}
+    .list li svg{flex:0 0 auto; margin-top:3px}
+    .pay-tiles{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+    .tile{padding:14px; border-radius:18px; border:1px dashed rgba(255,255,255,.16); background:#0f1524}
+    .tile small{color:var(--muted)}
+    form{display:grid; gap:14px}
+    label{display:grid; gap:6px; font-weight:600}
+    input, textarea, select{padding:12px 14px; border-radius:14px; border:1px solid rgba(255,255,255,.14); background:#0e1422; color:var(--text)}
+    textarea{min-height:140px; resize:vertical}
+    .foot{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; color:var(--muted)}
+    .notice{font-size:.92rem; color:var(--muted)}
+    .badge{display:inline-block; padding:.28rem .6rem; border-radius:10px; border:1px solid rgba(255,255,255,.12); font-size:.8rem; color:var(--muted)}
+    @media (max-width: 920px){
+      .hero{grid-template-columns:1fr;}
+      .grid-3{grid-template-columns:1fr}
+      .grid-2{grid-template-columns:1fr}
+      .kpis{grid-template-columns:1fr 1fr}
+      .pay-tiles{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<header class="container" role="banner">
+  <nav class="glass card" aria-label="Primary">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap">
+      <div style="display:flex; align-items:center; gap:.8rem">
+        <div aria-hidden="true" style="width:38px; height:38px; border-radius:12px; display:grid; place-items:center; background:linear-gradient(135deg, var(--accent), var(--accent-2)); color:#0b0f17; font-weight:800">F</div>
+        <div>
+          <strong style="font-size:1.1rem">Filers.inc</strong><br>
+          <span class="badge">Custom files on request</span>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center">
+        <a class="btn btn-ghost" href="#work">What I make</a>
+        <a class="btn btn-ghost" href="#pay">Payments</a>
+        <a class="btn btn-primary" href="#order">Order a file</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main class="container" id="main" role="main">
+  <!-- HERO -->
+  <section class="hero section" aria-label="Intro">
+    <div class="glass card">
+      <span class="pill">Made to your spec</span>
+      <h1>I make files for what you say.</h1>
+      <p class="lead">Tell me what you need — document, spreadsheet, graphics, code snippets, configs, templates — and I’ll craft a clean, ready‑to‑use file fast.</p>
+      <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap">
+        <a class="btn btn-primary" href="#order">Start an order</a>
+        <a class="btn" href="#how">How it works</a>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><b>24–72h</b><br><span class="muted">Typical turnaround</span></div>
+        <div class="kpi"><b>Unlimited</b><br><span class="muted">minor tweaks included</span></div>
+        <div class="kpi"><b>Simple</b><br><span class="muted">pay with Apple Pay or gift cards</span></div>
+      </div>
+    </div>
+    <aside class="glass card" aria-label="Preview" style="position:relative; overflow:hidden">
+      <div style="position:absolute; inset:0; background:radial-gradient(400px 200px at 20% 10%, rgba(124,92,255,.15), transparent 60%), radial-gradient(300px 300px at 90% 20%, rgba(34,211,238,.18), transparent 60%)"></div>
+      <div style="position:relative">
+        <h2 style="margin-bottom:6px">Popular requests</h2>
+        <ul class="list">
+          <li>
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6a2 2 0 0 1 2-2h5l2 2h5a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z"/></svg>
+            <div><b>Docs</b><br><span class="muted">Resumes, proposals, templates, PDFs</span></div>
+          </li>
+          <li>
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h18v4H3zM3 10h18v4H3zM3 17h18v4H3z"/></svg>
+            <div><b>Sheets</b><br><span class="muted">Budgets, trackers, dashboards</span></div>
+          </li>
+          <li>
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg>
+            <div><b>Design</b><br><span class="muted">Logos, banners, social posts</span></div>
+          </li>
+          <li>
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17V7a2 2 0 0 1 2-2h7l5 5v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg>
+            <div><b>Code</b><br><span class="muted">Snippets, configs, HTML templates</span></div>
+          </li>
+        </ul>
+      </div>
+    </aside>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="section">
+    <div class="glass card">
+      <h2>How it works</h2>
+      <div class="grid-3" role="list">
+        <div class="tile" role="listitem">
+          <h3 style="margin:0 0 6px">1) You describe it</h3>
+          <p class="notice">Tell me the file type, purpose, and any examples. The more details, the better.</p>
+        </div>
+        <div class="tile" role="listitem">
+          <h3 style="margin:0 0 6px">2) I draft & share</h3>
+          <p class="notice">I send a preview or sample for confirmation. Minor tweaks are included.</p>
+        </div>
+        <div class="tile" role="listitem">
+          <h3 style="margin:0 0 6px">3) You pay & download</h3>
+          <p class="notice">Secure checkout via your chosen method. Then you get the final file.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT I MAKE -->
+  <section id="work" class="section">
+    <div class="glass card">
+      <h2>What I make</h2>
+      <div class="grid-2">
+        <div class="tile">
+          <h3>Documents & PDFs</h3>
+          <ul class="list">
+            <li>• Resumes & cover letters</li>
+            <li>• Business proposals, invoices, letterheads</li>
+            <li>• Forms, checklists, SOPs</li>
+          </ul>
+        </div>
+        <div class="tile">
+          <h3>Spreadsheets & Dashboards</h3>
+          <ul class="list">
+            <li>• Budgets, finance trackers, CRMs</li>
+            <li>• Project plans, calendars, KPI dashboards</li>
+            <li>• CSV cleanup & data formatting</li>
+          </ul>
+        </div>
+        <div class="tile">
+          <h3>Design Assets</h3>
+          <ul class="list">
+            <li>• Logos, icons, banners</li>
+            <li>• Social posts & thumbnails</li>
+            <li>• Simple slide decks</li>
+          </ul>
+        </div>
+        <div class="tile">
+          <h3>Code & Web</h3>
+          <ul class="list">
+            <li>• HTML/CSS landing pages</li>
+            <li>• JSON/YAML configs & templates</li>
+            <li>• Automation snippets & docs</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAYMENTS -->
+  <section id="pay" class="section">
+    <div class="glass card">
+      <h2>Payments I accept</h2>
+      <div class="pay-tiles">
+        <div class="tile">
+          <h3 style="display:flex; align-items:center; gap:.5rem; margin:0 0 6px">
+            <span aria-hidden="true"></span> Apple Pay
+          </h3>
+          <small>Available via payment link on compatible Apple devices (iPhone, iPad, Mac).</small>
+        </div>
+        <div class="tile">
+          <h3 style="margin:0 0 6px">Steam gift cards</h3>
+          <small>Pay using a valid Steam Wallet gift card code (digital or physical).</small>
+        </div>
+        <div class="tile">
+          <h3 style="margin:0 0 6px">Other gift cards</h3>
+          <small>Tell me the brand (e.g., Visa/Mastercard prepaid, Amazon) and card value.</small>
+        </div>
+      </div>
+      <p class="notice" style="margin-top:10px">Note: Online payment methods may require identity or device verification. I’ll confirm your total and send simple instructions for your chosen method.</p>
+    </div>
+  </section>
+
+  <!-- ORDER FORM -->
+  <section id="order" class="section">
+    <div class="glass card">
+      <h2>Order a file</h2>
+      <form id="orderForm">
+        <div class="grid-2">
+          <label> Your name
+            <input required name="name" placeholder="Jane Doe" />
+          </label>
+          <label> Contact (email or Discord)
+            <input required name="contact" placeholder="jane@example.com or @jane" />
+          </label>
+        </div>
+        <label> What do you need?
+          <textarea required name="details" placeholder="Example: A one‑page resume PDF in a clean style. Include sections for Skills, Work Experience, and Education. Use blue highlights."></textarea>
+        </label>
+        <div class="grid-2">
+          <label> Desired file type
+            <select name="type">
+              <option>PDF</option>
+              <option>DOCX</option>
+              <option>Google Doc</option>
+              <option>Spreadsheet (XLSX/Google Sheets)</option>
+              <option>Image (PNG/SVG)</option>
+              <option>HTML/CSS</option>
+              <option>Other</option>
+            </select>
+          </label>
+          <label> Target date
+            <input name="date" type="date" />
+          </label>
+        </div>
+        <div class="grid-2">
+          <label> Budget (USD)
+            <input name="budget" type="number" min="0" step="1" placeholder="e.g., 25" />
+          </label>
+          <label> Payment method
+            <select name="pay">
+              <option>Apple Pay</option>
+              <option>Steam gift card</option>
+              <option>Other gift card</option>
+            </select>
+          </label>
+        </div>
+        <div class="grid-2">
+          <label> Attachments / links (optional)
+            <input name="links" placeholder="Share links to examples or files" />
+          </label>
+          <label> Gift card brand (if applicable)
+            <input name="giftbrand" placeholder="e.g., Visa Prepaid, Amazon" />
+          </label>
+        </div>
+        <div class="foot">
+          <button type="submit" class="btn btn-primary">Send order request</button>
+          <span class="notice">No account needed. I’ll reply with a quote and next steps.</span>
+        </div>
+      </form>
+      <p id="formNote" class="notice" role="status" aria-live="polite" style="margin-top:10px"></p>
+    </div>
+  </section>
+</main>
+
+<footer class="container section" role="contentinfo">
+  <div class="glass card">
+    <div class="foot">
+      <div>
+        <b>Filers.inc</b> — I make the files you ask for.
+        <div class="notice">Contact: <a href="mailto:orders@filers.inc">orders@filers.inc</a> • Discord: <span class="badge">@filersinc</span></div>
+      </div>
+      <div class="notice">© <span id="year"></span> Filers.inc. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+  const form = document.getElementById('orderForm');
+  const note = document.getElementById('formNote');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+    const subject = encodeURIComponent(`[Order] ${data.type || 'File'} from ${data.name}`);
+    const body = encodeURIComponent(
+      `Name: ${data.name}\n`+
+      `Contact: ${data.contact}\n`+
+      `Type: ${data.type}\n`+
+      `Target date: ${data.date || 'N/A'}\n`+
+      `Budget: $${data.budget || 'N/A'}\n`+
+      `Payment: ${data.pay}\n`+
+      `Gift card brand: ${data.giftbrand || 'N/A'}\n`+
+      `Links: ${data.links || 'N/A'}\n`+
+      `\nDetails:\n${data.details}\n`
+    );
+    const mailto = `mailto:orders@filers.inc?subject=${subject}&body=${body}`;
+    note.textContent = 'Opening your email app… If nothing opens, email orders@filers.inc with your details.';
+    window.location.href = mailto;
+  });
+</script>
+</body>
+</html>
